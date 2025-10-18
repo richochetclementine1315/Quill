@@ -20,4 +20,9 @@ func (user *User) SetPassword(password string) {
 
 }
 
+// CheckPassword method to verify the password during login
+func (user *User) CheckPassword(password string) error {
+	return bcrypt.CompareHashAndPassword(user.Password, []byte(password))
+}
+
 // Now we will migrate it to the DB

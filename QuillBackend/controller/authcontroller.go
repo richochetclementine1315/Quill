@@ -3,10 +3,13 @@ package controller
 import (
 	"QuillBackend/database"
 	"QuillBackend/models"
+	"QuillBackend/utils"
 	"fmt"
 	"log"
 	"regexp"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -72,5 +75,41 @@ func Register(c *fiber.Ctx) error {
 		// we are not sending the password back in the response
 		"message": "Registration successful",
 	})
+
+}
+
+// Login function to handle user login
+func Login(c *fiber.Ctx) error {
+	var data map[string]string
+	if err := c.BodyParser(&data); err != nil {
+		fmt.Println("Unable to parse body:", err)
+	}
+	// Check if the email exists in the database
+	// basically telling that if user is trying to login without prior signup,Telling them to signup first before login
+	var user models.User
+	database.DB.Where("email=?", data["email"]).First(&user)
+	if user.Id == 0 {
+		c.Status(404)
+		return c.JSON(fiber.Map{"message": "User not found"})
+	}
+	// Check if the password is correct and matches the hashed password
+	if err := user.CheckPassword(data["password"]); err != nil {
+		c.Status(400)
+		return c.JSON(fiber.Map{"message": "Incorrect password"})
+	}
+	// Generate JWT token upon successful login
+	token, err := utils.GenerateJWT(strconv.Itoa(int(user.Id)))
+	if err != nil {
+		c.Status(fiber.StatusInternalServerError)
+		return nil
+	}
+	cookie := fiber.Cookie{
+		Name:     "jwt",                          // cookie name used to store the token
+		Value:    token,                          // token as value used for authentication
+		Expires:  time.Now().Add(time.Hour * 24), // 1 day
+		HTTPOnly: true,                           // to prevent client side js access
+	}
+	c.Cookie(&cookie)
+	return c.JSON(fiber.Map{"message": "Login successful"})
 
 }
