@@ -3,7 +3,6 @@ package main
 import (
 	"QuillBackend/database"
 	"QuillBackend/routes"
-	"log"
 	"os"
 
 	"github.com/gofiber/fiber/v2"
@@ -12,10 +11,9 @@ import (
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	// Load .env file only in development (optional in production)
+	_ = godotenv.Load() // Ignore error if .env doesn't exist
+
 	database.Connect()
 	port := os.Getenv("PORT")
 	app := fiber.New()
