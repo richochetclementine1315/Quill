@@ -18,8 +18,22 @@ func CreatePost(c *fiber.Ctx) error {
 	var blogpost models.Blog
 	if err := c.BodyParser(&blogpost); err != nil {
 		fmt.Println("Error parsing body:", err)
-
+		c.Status(400)
+		return c.JSON(fiber.Map{"message": "Invalid request body"})
 	}
+
+	// Extract user ID from JWT cookie
+	cookie := c.Cookies("jwt")
+	id, err := utils.ParseJWT(cookie)
+	if err != nil {
+		c.Status(401)
+		return c.JSON(fiber.Map{"message": "Unauthenticated"})
+	}
+
+	// Convert string ID to uint and set the UserID for the blog post
+	userID, _ := strconv.Atoi(id)
+	blogpost.UserID = uint(userID)
+
 	if err := database.DB.Create(&blogpost).Error; err != nil {
 		c.Status(400)
 		return c.JSON(fiber.Map{"message": "Invalid Payload!"})

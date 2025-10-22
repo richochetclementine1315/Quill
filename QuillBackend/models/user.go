@@ -4,9 +4,9 @@ import "golang.org/x/crypto/bcrypt"
 
 type User struct {
 	ID        uint   `json:"id"`
-	FirstName string `json:first_name`
-	LastName  string `json:last_name`
-	Email     string `json:email`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Email     string `json:"email"`
 	// Bcrypt hashed password
 	// We removed the json tag to prevent it from being sent in responses
 	Password []byte `json:"-"`
