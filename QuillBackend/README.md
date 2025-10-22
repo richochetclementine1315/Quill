@@ -25,6 +25,8 @@ A RESTful blog backend API built with Go, Fiber, GORM, and MySQL. Features JWT-b
 - ✅ Password hashing with bcrypt
 - ✅ Protected routes with middleware
 - ✅ Complete CRUD operations for blog posts
+- ✅ Image upload functionality with unique filename generation
+- ✅ Static file serving for uploaded images
 - ✅ Pagination support for posts
 - ✅ User-specific post management
 - ✅ Foreign key relationships between users and posts
@@ -496,6 +498,72 @@ Delete a blog post by ID.
 
 ---
 
+#### 9. Upload Image
+
+Upload an image file for blog posts.
+
+**Endpoint**: `POST /api/upload-image`
+
+**Access**: Protected (requires authentication)
+
+**Headers**: 
+- Cookie: `jwt=<token>` (automatically sent by browser after login)
+- Content-Type: `multipart/form-data`
+
+**Request Body** (Form Data):
+- Key: `image`
+- Value: Image file (supported formats: JPG, PNG, GIF, etc.)
+- You can upload multiple images at once
+
+**Example using cURL**:
+```bash
+curl -X POST http://localhost:8080/api/upload-image \
+  -b cookies.txt \
+  -F "image=@/path/to/your/image.jpg"
+```
+
+**Success Response** (200 OK):
+```json
+{
+  "url": "http://localhost:8080/uploads/aBcDe_myimage.jpg"
+}
+```
+
+**How it works**:
+- Generates a random 5-character prefix for the filename to ensure uniqueness
+- Saves the file to `./uploads/` directory
+- Returns the full URL to access the uploaded image
+- The URL can be used in the `image` field when creating/updating posts
+
+**Accessing Uploaded Images**:
+- Uploaded images are served statically at: `GET /api/uploads/:filename`
+- Example: `http://localhost:8080/api/uploads/aBcDe_myimage.jpg`
+- No authentication required to view images (public access)
+
+**Example Workflow**:
+1. Upload image: `POST /api/upload-image`
+2. Get URL from response: `"http://localhost:8080/uploads/aBcDe_myimage.jpg"`
+3. Use URL when creating post:
+   ```json
+   {
+     "title": "My Post",
+     "desc": "Content...",
+     "image": "http://localhost:8080/uploads/aBcDe_myimage.jpg"
+   }
+   ```
+
+**Important Notes**:
+- Uploaded files are stored in the `./uploads/` directory
+- Make sure the `uploads` folder exists in your project root
+- File names are prefixed with random 5-letter string to prevent collisions
+- Multiple files can be uploaded in a single request
+
+**Error Responses**:
+- `401 Unauthorized`: Missing or invalid JWT token
+- `400 Bad Request`: Invalid file format or upload error
+
+---
+
 ## 🔐 Authentication & Authorization
 
 ### How Authentication Works
@@ -559,30 +627,33 @@ Request → IsAuthenticate Middleware → Parse JWT Cookie → Validate Token �
 
 ```
 QuillBackend/
-├── main.go                 # Application entry point
-├── .env                    # Environment variables
-├── go.mod                  # Go module dependencies
-├── go.sum                  # Dependency checksums
+├── main.go                    # Application entry point
+├── .env                       # Environment variables
+├── go.mod                     # Go module dependencies
+├── go.sum                     # Dependency checksums
 │
-├── controller/             # Request handlers
-│   ├── authcontroller.go  # Register & Login handlers
-│   └── postcontroller.go  # Blog post CRUD handlers
+├── controller/                # Request handlers
+│   ├── authcontroller.go     # Register & Login handlers
+│   ├── postcontroller.go     # Blog post CRUD handlers
+│   └── imagecontroller.go    # Image upload handler
 │
-├── database/               # Database connection
-│   └── connect.go         # GORM MySQL connection & AutoMigrate
+├── database/                  # Database connection
+│   └── connect.go            # GORM MySQL connection & AutoMigrate
 │
-├── middleware/             # HTTP middleware
-│   └── middleware.go      # JWT authentication middleware
+├── middleware/                # HTTP middleware
+│   └── middleware.go         # JWT authentication middleware
 │
-├── models/                 # Database models
-│   ├── user.go            # User model & password methods
-│   └── blog.go            # Blog post model
+├── models/                    # Database models
+│   ├── user.go               # User model & password methods
+│   └── blog.go               # Blog post model
 │
-├── routes/                 # Route definitions
-│   └── route.go           # All API route mappings
+├── routes/                    # Route definitions
+│   └── route.go              # All API route mappings
 │
-└── utils/                  # Helper functions
-    └── helper.go          # JWT generation & parsing
+├── utils/                     # Helper functions
+│   └── helper.go             # JWT generation & parsing
+│
+└── uploads/                   # Uploaded image storage directory
 ```
 
 ## ⚠️ Error Handling
@@ -696,6 +767,13 @@ curl -X POST http://localhost:8080/api/post \
 ```bash
 curl -X GET "http://localhost:8080/api/allposts?page=1" \
   -b cookies.txt
+```
+
+**Upload Image**:
+```bash
+curl -X POST http://localhost:8080/api/upload-image \
+  -b cookies.txt \
+  -F "image=@/path/to/your/image.jpg"
 ```
 
 ### Using Postman or Thunder Client
