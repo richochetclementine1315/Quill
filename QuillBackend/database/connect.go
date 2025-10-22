@@ -14,11 +14,9 @@ var DB *gorm.DB
 
 // Capitalize the function to make it portable to other packages
 func Connect() {
-	// Load environment variables from .env file
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error Loading .env file")
-	}
+	// Load .env file only in development (optional in production)
+	_ = godotenv.Load() // Ignore error if .env doesn't exist
+
 	dsn := os.Getenv("DSN")
 	database, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
