@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -49,7 +50,7 @@ func Register(c *fiber.Ctx) error {
 	}
 	// Check if the email already exists in the database
 	database.DB.Where("email=?", strings.TrimSpace(data["email"].(string))).First(&userData)
-	if userData.Id != 0 {
+	if userData.ID != 0 {
 		c.Status(400)
 		return c.JSON(fiber.Map{"message": "Email already registered"})
 	}
@@ -88,7 +89,7 @@ func Login(c *fiber.Ctx) error {
 	// basically telling that if user is trying to login without prior signup,Telling them to signup first before login
 	var user models.User
 	database.DB.Where("email=?", data["email"]).First(&user)
-	if user.Id == 0 {
+	if user.ID == 0 {
 		c.Status(404)
 		return c.JSON(fiber.Map{"message": "User not found"})
 	}
@@ -98,7 +99,7 @@ func Login(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{"message": "Incorrect password"})
 	}
 	// Generate JWT token upon successful login
-	token, err := utils.GenerateJWT(strconv.Itoa(int(user.Id)))
+	token, err := utils.GenerateJWT(strconv.Itoa(int(user.ID)))
 	if err != nil {
 		c.Status(fiber.StatusInternalServerError)
 		return nil
@@ -111,5 +112,10 @@ func Login(c *fiber.Ctx) error {
 	}
 	c.Cookie(&cookie)
 	return c.JSON(fiber.Map{"message": "Login successful"})
+}
 
+// This struct is used to define the claims for JWT
+// claims are the pieces of information encoded in the token
+type Claims struct {
+	jwt.StandardClaims
 }

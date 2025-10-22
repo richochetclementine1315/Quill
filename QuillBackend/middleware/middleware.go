@@ -6,7 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func isAuthenticate(c *fiber.Ctx) error {
+func IsAuthenticate(c *fiber.Ctx) error {
 	cookie := c.Cookies("jwt")
 	if _, err := utils.ParseJWT(cookie); err != nil {
 		c.Status(fiber.StatusUnauthorized)
