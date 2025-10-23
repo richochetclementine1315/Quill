@@ -22,8 +22,9 @@ func main() {
 	app.Use(cors.New(cors.Config{
 		AllowOrigins:     "https://quill-wpb7.onrender.com",
 		AllowCredentials: true,
-		AllowHeaders:     "Origin, Content-Type, Accept, Authorization",
+		AllowHeaders:     "Origin, Content-Type, Accept, Authorization, Cookie",
 		AllowMethods:     "GET, POST, PUT, DELETE, OPTIONS",
+		ExposeHeaders:    "Set-Cookie",
 	}))
 
 	// Serve static files from uploads directory

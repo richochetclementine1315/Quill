@@ -111,9 +111,13 @@ func Login(c *fiber.Ctx) error {
 		HTTPOnly: true,                           // to prevent client side js access
 		Secure:   true,                           // only send over HTTPS (required for SameSite=None)
 		SameSite: "None",                         // allow cross-domain cookies
+		Path:     "/",                            // cookie available for all paths
 	}
 	c.Cookie(&cookie)
-	return c.JSON(fiber.Map{"message": "Login successful"})
+	return c.JSON(fiber.Map{
+		"message": "Login successful",
+		"user_id": user.ID,
+	})
 }
 
 // This struct is used to define the claims for JWT
