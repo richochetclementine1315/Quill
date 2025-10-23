@@ -58,7 +58,8 @@ func Upload(c *fiber.Ctx) error {
 		backendURL = "https://quill-backend-lgxs.onrender.com"
 	}
 
+	// Return the correct static path - app.Static serves /api/uploads
 	return c.JSON(fiber.Map{
-		"url": backendURL + "/uploads/" + fileName,
+		"url": backendURL + "/api/uploads/" + fileName,
 	})
 }

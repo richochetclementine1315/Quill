@@ -18,10 +18,13 @@ func main() {
 	port := os.Getenv("PORT")
 	app := fiber.New()
 
-	// CORS middleware - allow your Vercel frontend
+	// CORS middleware - allow your Vercel frontend and enable CORS for static files
 	app.Use(cors.New(cors.Config{
 		AllowOrigins:     "https://quill-ten.vercel.app",
 		AllowCredentials: true,
+		AllowHeaders:     "Origin, Content-Type, Accept, Authorization",
+		AllowMethods:     "GET, POST, PUT, DELETE, OPTIONS",
+		ExposeHeaders:    "Content-Length, Content-Type",
 	}))
 
 	routes.Setup(app)

@@ -8,6 +8,9 @@ import (
 )
 
 func Setup(app *fiber.App) {
+	// Static files - must be BEFORE auth middleware so images are publicly accessible
+	app.Static("/api/uploads", "./uploads")
+
 	// Public routes (no authentication required)
 	app.Post("/api/register", controller.Register)
 	app.Post("/api/login", controller.Login)
@@ -21,5 +24,4 @@ func Setup(app *fiber.App) {
 	app.Get("/api/uniquepost", controller.UniquePost)
 	app.Delete("/api/deletepost/:id", controller.DeletePost)
 	app.Post("/api/upload-image", controller.Upload)
-	app.Static("/api/uploads", "./uploads")
 }
