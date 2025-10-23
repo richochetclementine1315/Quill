@@ -4,7 +4,7 @@
 
 ### A Modern Full-Stack Blogging Platform
 
-<img src="https://raw.githubusercontent.com/richochetclementine1315/Quill/main/QuillFrontend/public/quill-logo.svg" alt="Quill Logo" width="150" height="150">
+<img src="https://www.seekpng.com/png/full/101-1010261_quill-logo.png" alt="Quill Logo" width="200" height="200">
 
 [![Go](https://img.shields.io/badge/Go-1.24-00ADD8?style=for-the-badge&logo=go&logoColor=white)](https://go.dev/)
 [![Fiber](https://img.shields.io/badge/Fiber-v2.52-00ACD7?style=for-the-badge&logo=go&logoColor=white)](https://gofiber.io/)
