@@ -29,6 +29,12 @@ func Upload(c *fiber.Ctx) error {
 	}
 	// Get the files from the "image" field in the form.
 	files := form.File["image"]
+	if len(files) == 0 {
+		return c.Status(400).JSON(fiber.Map{
+			"message": "No image file provided",
+		})
+	}
+
 	fileName := ""
 	// Loop through each file and save it to the "uploads" directory with a unique name.
 	for _, file := range files {
@@ -36,11 +42,20 @@ func Upload(c *fiber.Ctx) error {
 		fileName = randLetter(5) + "_" + file.Filename
 
 		if err := c.SaveFile(file, "./uploads/"+fileName); err != nil {
-			return nil
+			return c.Status(500).JSON(fiber.Map{
+				"message": "Failed to save file",
+				"error":   err.Error(),
+			})
 		}
 	}
+
+	// Get the base URL from the request
+	protocol := c.Protocol()
+	host := c.Hostname()
+	baseURL := protocol + "://" + host
+
 	// Return the URL of the uploaded image as a JSON response.
 	return c.JSON(fiber.Map{
-		"url": "http://localhost:8080/uploads/" + fileName,
+		"url": baseURL + "/uploads/" + fileName,
 	})
 }
