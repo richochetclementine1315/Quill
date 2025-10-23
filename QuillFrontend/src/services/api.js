@@ -1,7 +1,8 @@
 import axios from 'axios';
 
-// Use environment variable in production, localhost in development
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
+// Use environment variable in production, or relative path (proxied by Vercel)
+// In production, Vercel rewrites /api/* to the backend URL
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
