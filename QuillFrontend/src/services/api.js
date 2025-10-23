@@ -1,12 +1,13 @@
 import axios from 'axios';
 
-// Use environment variable in production, or relative path (proxied by Vercel)
-// In production, Vercel rewrites /api/* to the backend URL
-const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+// Always use /api in production (Vercel proxy), direct URL in development
+const API_BASE_URL = import.meta.env.DEV 
+  ? 'http://localhost:8080/api'
+  : '/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  withCredentials: true, // Important: sends cookies with requests
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   }
@@ -18,10 +19,10 @@ export const authAPI = {
   login: (data) => api.post('/login', data),
 };
 
-// Post API calls
+// Post API calls - matching reference backend routes
 export const postAPI = {
-  getAllPosts: (page = 1) => api.get(`/allposts?page=${page}`),
-  getPostById: (id) => api.get(`/allposts/${id}`),
+  getAllPosts: (page = 1) => api.get(`/allpost?page=${page}`),
+  getPostById: (id) => api.get(`/allpost/${id}`),
   createPost: (data) => api.post('/post', data),
   updatePost: (id, data) => api.put(`/updatepost/${id}`, data),
   deletePost: (id) => api.delete(`/deletepost/${id}`),

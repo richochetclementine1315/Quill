@@ -1,8 +1,9 @@
-DEPLOY_NOW.md  
-DEPLOYMENT.md
-DEPLOY_RAILWAY_ONLY.md
-DEPLOYMENT_OPTIONS.md
-FIX_MIME_ERROR.md
-COOKIE_TROUBLESHOOTING.md
-BETTER_DEPLOYMENT_OPTIONS.md
-FINAL_DIAGNOSIS.md
+# Deployment documentation (kept for reference but not pushed)
+DEPLOY_*.md
+DEPLOYMENT*.md
+FIX_*.md
+COOKIE_*.md
+BETTER_*.md
+FINAL_*.md
+*_DIAGNOSIS.md
+*_OPTIONS.md
