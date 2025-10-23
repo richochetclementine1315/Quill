@@ -20,7 +20,7 @@ func main() {
 
 	// CORS middleware
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     "https://quill-wpb7.onrender.com",
+		AllowOrigins:     "https://quill-ten.vercel.app",
 		AllowCredentials: true,
 		AllowHeaders:     "Origin, Content-Type, Accept, Authorization, Cookie",
 		AllowMethods:     "GET, POST, PUT, DELETE, OPTIONS",
