@@ -18,10 +18,19 @@ func randLetter(n int) string {
 }
 
 func Upload(c *fiber.Ctx) error {
+	// Ensure uploads directory exists
+	if err := os.MkdirAll("./uploads", 0755); err != nil {
+		return c.Status(500).JSON(fiber.Map{
+			"message": "Failed to create uploads directory",
+			"error":   err.Error(),
+		})
+	}
+
 	form, err := c.MultipartForm()
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{
 			"message": "Failed to parse form",
+			"error":   err.Error(),
 		})
 	}
 
@@ -38,6 +47,7 @@ func Upload(c *fiber.Ctx) error {
 		if err := c.SaveFile(file, "./uploads/"+fileName); err != nil {
 			return c.Status(500).JSON(fiber.Map{
 				"message": "Failed to save file",
+				"error":   err.Error(),
 			})
 		}
 	}
