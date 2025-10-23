@@ -5,6 +5,10 @@
       "destination": "https://quill-backend-lgxs.onrender.com/api/$1"
     },
     {
+      "source": "/uploads/(.*)",
+      "destination": "https://quill-backend-lgxs.onrender.com/uploads/$1"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

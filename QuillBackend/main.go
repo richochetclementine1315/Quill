@@ -18,9 +18,9 @@ func main() {
 	port := os.Getenv("PORT")
 	app := fiber.New()
 
-	// CORS middleware - simplified
+	// CORS middleware - allow both Vercel URLs
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     "https://quill-omega-three.vercel.app",
+		AllowOrigins:     "https://quill-ten.vercel.app,",
 		AllowCredentials: true,
 	}))
 
