@@ -32,8 +32,8 @@ export const uploadImage = (file) => {
   const formData = new FormData();
   formData.append('image', file);
   
-  return axios.post(`${API_BASE_URL}/upload-image`, formData, {
-    withCredentials: true,
+  // Use the configured api instance to ensure cookies are sent
+  return api.post('/upload-image', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     }
