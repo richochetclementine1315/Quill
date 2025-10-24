@@ -5,6 +5,7 @@ import { postAPI } from '../services/api';
 export default function Home() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const [meta, setMeta] = useState({});
 
@@ -14,11 +15,17 @@ export default function Home() {
 
   const fetchPosts = async () => {
     try {
+      setError(null);
       const response = await postAPI.getAllPosts(page);
       setPosts(response.data.data);
       setMeta(response.data.meta);
     } catch (error) {
       console.error('Error fetching posts:', error);
+      if (error.response?.status === 502) {
+        setError('Backend is waking up from sleep (free tier). Please wait 30 seconds and refresh...');
+      } else {
+        setError('Failed to load posts. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -26,8 +33,28 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="text-xl text-gray-600">Loading...</div>
+      <div className="flex flex-col justify-center items-center min-h-screen">
+        <div className="text-xl text-gray-600 dark:text-gray-400 mb-2">Loading posts...</div>
+        <div className="text-sm text-gray-500 dark:text-gray-500">
+          (First load may take 30-60 seconds on free tier)
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col justify-center items-center min-h-screen">
+        <div className="text-xl text-red-600 dark:text-red-400 mb-4">{error}</div>
+        <button
+          onClick={() => {
+            setLoading(true);
+            fetchPosts();
+          }}
+          className="bg-primary hover:bg-primary-dark text-white font-medium py-2 px-6 rounded-md transition"
+        >
+          Retry
+        </button>
       </div>
     );
   }

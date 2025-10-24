@@ -10,8 +10,24 @@ const api = axios.create({
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
-  }
+  },
+  timeout: 60000, // 60 second timeout for cold starts
 });
+
+// Add response interceptor for better error handling
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    // If 502 error (backend sleeping), retry once after delay
+    if (error.response?.status === 502 && !error.config._retry) {
+      error.config._retry = true;
+      console.log('Backend is waking up... retrying in 5 seconds');
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      return api(error.config);
+    }
+    return Promise.reject(error);
+  }
+);
 
 // Auth API calls
 export const authAPI = {
