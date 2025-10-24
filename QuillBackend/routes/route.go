@@ -8,6 +8,11 @@ import (
 )
 
 func Setup(app *fiber.App) {
+	// Health check endpoint (lightweight, no DB query)
+	app.Get("/api/health", func(c *fiber.Ctx) error {
+		return c.JSON(fiber.Map{"status": "ok"})
+	})
+
 	// Static files - must be BEFORE auth middleware so images are publicly accessible
 	app.Static("/api/uploads", "./uploads")
 

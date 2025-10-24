@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { postAPI } from '../services/api';
+import { postAPI, wakeBackend } from '../services/api';
 
 export default function Home() {
   const [posts, setPosts] = useState([]);
@@ -8,9 +8,23 @@ export default function Home() {
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const [meta, setMeta] = useState({});
+  const [wakingBackend, setWakingBackend] = useState(false);
 
   useEffect(() => {
-    fetchPosts();
+    // Wake backend on component mount
+    const initFetch = async () => {
+      setWakingBackend(true);
+      await wakeBackend(); // Ping backend first
+      setWakingBackend(false);
+      fetchPosts();
+    };
+    initFetch();
+  }, []);
+
+  useEffect(() => {
+    if (!wakingBackend) {
+      fetchPosts();
+    }
   }, [page]);
 
   const fetchPosts = async () => {
@@ -21,8 +35,10 @@ export default function Home() {
       setMeta(response.data.meta);
     } catch (error) {
       console.error('Error fetching posts:', error);
-      if (error.response?.status === 502) {
-        setError('Backend is waking up from sleep (free tier). Please wait 30 seconds and refresh...');
+      if ([502, 503, 504].includes(error.response?.status)) {
+        setError('Backend is waking up (free tier). Please wait and click Retry...');
+      } else if (error.code === 'ECONNABORTED') {
+        setError('Request timeout. Backend may be sleeping. Please retry...');
       } else {
         setError('Failed to load posts. Please try again.');
       }
@@ -31,12 +47,16 @@ export default function Home() {
     }
   };
 
-  if (loading) {
+  if (loading || wakingBackend) {
     return (
       <div className="flex flex-col justify-center items-center min-h-screen">
-        <div className="text-xl text-gray-600 dark:text-gray-400 mb-2">Loading posts...</div>
+        {/* Spinner */}
+        <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-primary mb-4"></div>
+        <div className="text-xl text-gray-600 dark:text-gray-400 mb-2">
+          {wakingBackend ? 'Waking up backend...' : 'Loading posts...'}
+        </div>
         <div className="text-sm text-gray-500 dark:text-gray-500">
-          (First load may take 30-60 seconds on free tier)
+          Free tier may take 30-60 seconds on first load
         </div>
       </div>
     );
