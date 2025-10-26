@@ -18,7 +18,7 @@
 [![Deployed on Render](https://img.shields.io/badge/Backend-Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://quill-backend-lgxs.onrender.com)
 [![Deployed on Vercel](https://img.shields.io/badge/Frontend-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://quill-ten.vercel.app)
 
-**🌐 [Live Application](https://quill-ten.vercel.app)** • [Backend API](https://quill-backend-lgxs.onrender.com/api/allpost) • [Report Bug](https://github.com/richochetclementine1315/Quill/issues) • [Request Feature](https://github.com/richochetclementine1315/Quill/issues)
+**🌐 [Live Application](https://quill-blogs.vercel.app/)** • [Backend API](https://quill-backend-lgxs.onrender.com/api/allpost) • [Report Bug](https://github.com/richochetclementine1315/Quill/issues) • [Request Feature](https://github.com/richochetclementine1315/Quill/issues)
 
 </div>
 
